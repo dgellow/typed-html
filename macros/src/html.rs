@@ -109,6 +109,20 @@ fn extract_data_attrs(attrs: &mut StringyMap<Ident, TokenTree>) -> StringyMap<St
     data
 }
 
+fn extract_aria_attrs(attrs: &mut StringyMap<Ident, TokenTree>) -> StringyMap<String, TokenTree> {
+    let mut data = StringyMap::new();
+    let keys: Vec<Ident> = attrs.keys().cloned().collect();
+    for key in keys {
+        let key_name = key.to_string();
+        let prefix = "aria_";
+        if key_name.starts_with(prefix) {
+            let value = attrs.remove(&key).unwrap();
+            data.insert(key_name[prefix.len()..].to_string(), value);
+        }
+    }
+    data
+}
+
 fn extract_event_handlers(
     attrs: &mut StringyMap<Ident, TokenTree>,
 ) -> StringyMap<Ident, TokenTree> {
@@ -175,6 +189,8 @@ impl Element {
         }
         let events = extract_event_handlers(&mut self.attributes);
         let data_attrs = extract_data_attrs(&mut self.attributes);
+        let aria_attrs = extract_aria_attrs(&mut self.attributes);
+
         let attrs = self.attributes.iter().map(|(key, value)| {
             (
                 key.to_string(),
@@ -244,6 +260,14 @@ impl Element {
         {
             body.extend(quote!(
                 element.data_attributes.push((#key, #value.into()));
+            ));
+        }
+        for (key, value) in aria_attrs
+            .iter()
+            .map(|(k, v)| (TokenTree::from(Literal::string(k)), v.clone()))
+        {
+            body.extend(quote!(
+                element.aria_attributes.push((#key, #value.into()));
             ));
         }
         body.extend(opt_children);

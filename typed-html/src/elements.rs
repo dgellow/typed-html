@@ -479,7 +479,17 @@ fn test_data_attributes() {
 }
 
 #[test]
-fn test_svg_element() {
+fn test_aria_attributes() {
+    use crate as typed_html;
+    use crate::{dom::DOMTree, html};
+
+    let frag: DOMTree<String> = html!(<div aria-hidden="true">"Boo!"</div>);
+
+    assert_eq!(r#"<div aria-hidden="true">Boo!</div>"#, frag.to_string());
+}
+
+#[test]
+fn test_svg_element_1() {
     use crate as typed_html;
     use crate::{dom::DOMTree, html};
 
