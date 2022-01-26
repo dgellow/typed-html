@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bodil/typed-html.svg?branch=master)](https://travis-ci.org/bodil/typed-html)
+[![Continuous Integration](https://github.com/dgellow/typed-html/actions/workflows/ci.yml/badge.svg)](https://github.com/dgellow/typed-html/actions/workflows/ci.yml)
 
 # typed-html
 
