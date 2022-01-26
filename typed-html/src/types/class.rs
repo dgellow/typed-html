@@ -10,7 +10,7 @@ use super::Id;
 ///
 /// A CSS class is a non-empty string that starts with an alphanumeric character
 /// and is followed by any number of alphanumeric characters and the
-/// `_`, `-` and `.` characters.
+/// `_`, `-`, `.`, and ':' characters.
 ///
 /// See also [`Id`][Id].
 ///
@@ -45,8 +45,10 @@ impl FromStr for Class {
             _ => (),
         }
         for c in chars {
-            if !c.is_alphanumeric() && c != '_' && c != '-' && c != '.' {
-                return Err("class name can only contain alphanumerics, dash, dot and underscore");
+            if !c.is_alphanumeric() && c != '_' && c != '-' && c != '.' && c != ':' {
+                return Err(
+                    "class name can only contain alphanumerics, dash, dot, colons, and underscore",
+                );
             }
         }
         Ok(Class(s.to_string()))
@@ -76,5 +78,28 @@ impl Deref for Class {
     type Target = String;
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+#[test]
+fn test_tailwindcss_classes() {
+    for class_str in [
+        "text-slate-900",
+        "dark:text-white",
+        "mt-5",
+        "text-base",
+        "font-medium",
+        "tracking-tight",
+        "md:h-full",
+        "md:w-48",
+        "bg-violet-500",
+        "hover:bg-violet-400",
+        "active:bg-violet-600",
+        "focus:outline-none",
+        "focus:ring",
+        "focus:ring-violet-300",
+    ] {
+        let out = Class::from_str(class_str);
+        assert_eq!(out, Ok(Class(class_str.to_owned())));
     }
 }
